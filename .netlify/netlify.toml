@@ -1,0 +1,43 @@
+functionsDirectory = "/Users/mikeiyare/Downloads/worldshop/netlify/functions"
+functionsDirectoryOrigin = "config"
+redirectsOrigin = "config"
+plugins = []
+headers = []
+
+[build]
+publish = "/Users/mikeiyare/Downloads/worldshop/dist"
+publishOrigin = "config"
+commandOrigin = "config"
+base = "/Users/mikeiyare/Downloads/worldshop"
+command = "npm run build"
+functions = "/Users/mikeiyare/Downloads/worldshop/netlify/functions"
+
+[build.environment]
+
+[build.processing]
+
+[build.processing.css]
+
+[build.processing.html]
+
+[build.processing.images]
+
+[build.processing.js]
+
+[build.services]
+
+[functions]
+
+[functions."*"]
+
+[[redirects]]
+from = "/*"
+to = "/index.html"
+status = 200.0
+force = false
+
+[redirects.query]
+
+[redirects.conditions]
+
+[redirects.headers]
