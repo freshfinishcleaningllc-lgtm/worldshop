@@ -221,7 +221,7 @@ export default function WorldShop() {
 
       {/* ── NAV TABS ── */}
       <div style={{ background: "rgba(10,18,8,0.95)", borderBottom: `1px solid ${C.border}`, padding: "0 12px", display: "flex", gap: "1px", overflowX: "auto", scrollbarWidth: "none" }}>
-        {[["home", "🏠", "Home"], ["shop", "🛍️", "Shop"], ["ai", "🤖", "AI"], ["track", "📦", "Orders"], ["sell", "💰", "Sell"], ["dashboard", "📊", "Stats"], ["wishlist", "❤️", "Wishlist"], ["compare", "⚖️", "Compare"]].map(([id, icon, label]) => (
+        {[["home", "🏠", "Home"], ["shop", "🛍️", "Shop"], ["ai", "🤖", "AI"], ["track", "📦", "Orders"], ["sell", "💰", "Sell"], ["dashboard", "📊", "Stats"], ["wishlist", "❤️", "Wishlist"], ["compare", "⚖️", "Compare"], ["marketing", "📣", "Marketing"]].map(([id, icon, label]) => (
           <button key={id} className="n" onClick={() => setPage(id)} style={{ background: "transparent", border: "none", borderBottom: page === id ? `2px solid ${C.accent}` : "2px solid transparent", padding: "9px 10px", color: page === id ? C.accent : "rgba(240,253,244,0.42)", fontSize: "0.68rem", fontWeight: page === id ? 700 : 400, whiteSpace: "nowrap", display: "flex", alignItems: "center", gap: "3px" }}>
             <span>{icon}</span><span className="donly">{label}</span>
           </button>
@@ -649,6 +649,68 @@ export default function WorldShop() {
 
       </div>
 
+
+      {/* ── MARKETING ── */}
+      {page === "marketing" && <div style={pw} className="fd">
+        <h2 style={{ fontWeight: 800, fontSize: "1rem", color: C.gold, marginBottom: "5px" }}>📣 Marketing Hub</h2>
+        <p style={{ fontSize: "0.75rem", color: "rgba(240,253,244,0.42)", marginBottom: "13px" }}>Connect all ad platforms and grow WorldShop!</p>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: "8px", marginBottom: "13px" }}>
+          {[["👁️","24.5K","Reach"],["👆","846","Clicks"],["✅","55","Sales"],["💰","$1,240","Revenue"]].map(([icon,val,label])=>(
+            <div key={label} style={{...card,textAlign:"center",padding:"10px"}}>
+              <div style={{fontSize:"1.2rem",marginBottom:"3px"}}>{icon}</div>
+              <div style={{fontWeight:900,fontSize:"0.95rem",color:C.accent}}>{val}</div>
+              <div style={{fontSize:"0.58rem",color:"rgba(240,253,244,0.4)",marginTop:"2px"}}>{label}</div>
+            </div>
+          ))}
+        </div>
+        <div style={{fontWeight:700,fontSize:"0.82rem",color:C.gold,marginBottom:"9px"}}>🔌 Ad Platforms</div>
+        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"8px",marginBottom:"13px"}}>
+          {[["📘","Facebook","50K/day","$5/day"],["📸","Instagram","30K/day","$5/day"],["🎵","TikTok","80K/day","$5/day"],["💬","WhatsApp","10K/day","FREE"],["🔍","Google Ads","20K/day","$3/day"],["💌","Email","5K/day","FREE"]].map(([icon,name,reach,cost])=>(
+            <div key={name} style={{...card,display:"flex",alignItems:"center",gap:"9px"}}>
+              <span style={{fontSize:"1.3rem"}}>{icon}</span>
+              <div style={{flex:1}}>
+                <div style={{fontWeight:700,fontSize:"0.75rem"}}>{name}</div>
+                <div style={{fontSize:"0.62rem",color:"rgba(240,253,244,0.42)"}}>{reach} · {cost}</div>
+              </div>
+              <div style={{width:"30px",height:"17px",borderRadius:"9px",background:C.accent,position:"relative",flexShrink:0,cursor:"pointer"}}>
+                <div style={{position:"absolute",width:"13px",height:"13px",borderRadius:"50%",background:"#fff",top:"2px",right:"2px"}}/>
+              </div>
+            </div>
+          ))}
+        </div>
+        <div style={{fontWeight:700,fontSize:"0.82rem",color:C.gold,marginBottom:"9px"}}>🤖 AI Ad Generator</div>
+        <div style={{...card,marginBottom:"13px",borderColor:"rgba(34,197,94,0.25)"}}>
+          <p style={{fontSize:"0.75rem",color:"rgba(240,253,244,0.55)",marginBottom:"9px",lineHeight:1.6}}>Generate professional ad copy for any platform in 8 African languages using Claude AI.</p>
+          <button className="b" onClick={()=>setPage("ai")} style={{width:"100%",background:C.accent,border:"none",borderRadius:"9px",padding:"10px",color:"#052e16",fontWeight:800,fontSize:"0.82rem"}}>🤖 Open AI Generator →</button>
+        </div>
+        <div style={{fontWeight:700,fontSize:"0.82rem",color:C.gold,marginBottom:"9px"}}>📈 Platform Performance</div>
+        <div style={{...card,marginBottom:"13px"}}>
+          {[["🎵 TikTok","85%"],["📘 Facebook","72%"],["💬 WhatsApp","65%"],["📸 Instagram","58%"],["🔍 Google","45%"],["💌 Email","32%"]].map(([name,pct])=>(
+            <div key={name} style={{marginBottom:"8px"}}>
+              <div style={{display:"flex",justifyContent:"space-between",fontSize:"0.72rem",marginBottom:"3px"}}>
+                <span>{name}</span><span style={{color:C.accent,fontWeight:600}}>{pct}</span>
+              </div>
+              <div style={{background:"rgba(255,255,255,0.07)",borderRadius:"4px",height:"6px"}}>
+                <div style={{background:C.accent,borderRadius:"4px",height:"100%",width:pct,opacity:0.8}}/>
+              </div>
+            </div>
+          ))}
+        </div>
+        <div style={{fontWeight:700,fontSize:"0.82rem",color:C.gold,marginBottom:"9px"}}>🔗 Connect Tools</div>
+        <div style={{display:"grid",gap:"6px"}}>
+          {[["📘","Meta Ads Manager","facebook.com/ads"],["🎵","TikTok Ads","ads.tiktok.com"],["🔍","Google Ads","ads.google.com"],["💌","Mailchimp","mailchimp.com"],["⚡","Zapier","zapier.com"],["📊","Buffer","buffer.com"]].map(([icon,name,url])=>(
+            <div key={name} style={{...card,display:"flex",alignItems:"center",gap:"10px"}}>
+              <span style={{fontSize:"1.2rem"}}>{icon}</span>
+              <div style={{flex:1}}>
+                <div style={{fontWeight:700,fontSize:"0.75rem"}}>{name}</div>
+                <div style={{fontSize:"0.62rem",color:"rgba(240,253,244,0.42)"}}>{url}</div>
+              </div>
+              <a href={"https://"+url} target="_blank" rel="noreferrer" style={{background:"rgba(34,197,94,0.12)",border:"1px solid rgba(34,197,94,0.2)",borderRadius:"7px",padding:"5px 10px",color:C.accent,fontSize:"0.65rem",fontWeight:700,textDecoration:"none"}}>Connect →</a>
+            </div>
+          ))}
+        </div>
+      </div>}
+
       {/* ── CART MODAL ── */}
       {showCart && <div style={{ position: "fixed", inset: 0, zIndex: 300, background: "rgba(0,0,0,0.75)", display: "flex", alignItems: "flex-end" }} onClick={() => setShowCart(false)}>
         <div onClick={e => e.stopPropagation()} style={{ width: "100%", maxWidth: "900px", margin: "0 auto", background: "#0a1208", borderRadius: "20px 20px 0 0", border: `1px solid ${C.border}`, padding: "17px", maxHeight: "85vh", overflowY: "auto" }}>
@@ -766,7 +828,7 @@ export default function WorldShop() {
 
       {/* ── BOTTOM NAV ── */}
       <nav style={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 200, background: "rgba(10,18,8,0.97)", borderTop: `1px solid ${C.border}`, backdropFilter: "blur(16px)", display: "flex", justifyContent: "space-around", padding: "5px 0", paddingBottom: "max(6px,env(safe-area-inset-bottom))" }}>
-        {[["home", "🏠", "Home"], ["shop", "🛍️", "Shop"], ["ai", "🤖", "AI"], ["track", "📦", "Orders"], ["sell", "💰", "Sell"], ["dashboard", "📊", "Stats"]].map(([id, icon, label]) => (
+        {[["home", "🏠", "Home"], ["shop", "🛍️", "Shop"], ["ai", "🤖", "AI"], ["track", "📦", "Orders"], ["sell", "💰", "Sell"], ["marketing", "📣", "Market"]].map(([id, icon, label]) => (
           <button key={id} className="n" onClick={() => setPage(id)} style={{ background: "transparent", border: "none", padding: "3px 5px", color: page === id ? C.accent : "rgba(240,253,244,0.35)", display: "flex", flexDirection: "column", alignItems: "center", gap: "2px", minWidth: "32px" }}>
             <span style={{ fontSize: page === id ? "1.1rem" : "1rem", filter: page === id ? `drop-shadow(0 0 5px rgba(34,197,94,0.6))` : "none" }}>{icon}</span>
             <span style={{ fontSize: "0.48rem", fontWeight: page === id ? 700 : 400 }}>{label}</span>
