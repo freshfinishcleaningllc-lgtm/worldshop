@@ -92,6 +92,9 @@ export default function WorldShop() {
   const [compareList, setCompareList] = useState([]);
   const [showFilters, setShowFilters] = useState(false);
   const [paymentLoading, setPaymentLoading] = useState(false);
+  const [cardNumber, setCardNumber] = useState("");
+  const [cardExpiry, setCardExpiry] = useState("");
+  const [cardCvv, setCardCvv] = useState("");
 
   const allProds = [...PRODUCTS, ...sellerProds];
   const filtered = allProds
@@ -839,6 +842,15 @@ export default function WorldShop() {
               <div style={{ fontSize: "0.65rem", color: "rgba(240,253,244,0.42)", marginBottom: "3px" }}>💳 Payment:</div>
               <div style={{ fontWeight: 600, fontSize: "0.78rem" }}>{PAYMENT_METHODS.find(m => m.id === payMethod)?.icon} {PAYMENT_METHODS.find(m => m.id === payMethod)?.label}</div>
               {payMethod === "flutterwave" && address.email && <div style={{ fontSize: "0.65rem", color: "rgba(240,253,244,0.42)", marginTop: "2px" }}>You will be redirected to Flutterwave to complete payment securely.</div>}
+              {payMethod === "stripe" && <div style={{ marginTop: "8px", background: "rgba(255,255,255,0.04)", borderRadius: "10px", padding: "12px" }}>
+                <div style={{ fontWeight: 700, fontSize: "0.78rem", color: C.accent, marginBottom: "10px" }}>💳 Enter Card Details</div>
+                <input value={cardNumber} onChange={e => setCardNumber(e.target.value.replace(/\D/g,'').replace(/(.{4})/g,'$1 ').trim().substring(0,19))} placeholder="Card number (1234 5678 9012 3456)" style={{ ...inp, marginBottom: "8px", letterSpacing: "2px" }} maxLength={19} />
+                <div style={{ display: "flex", gap: "8px" }}>
+                  <input value={cardExpiry} onChange={e => { let v = e.target.value.replace(/\D/g,''); if(v.length>=2) v = v.substring(0,2)+'/'+v.substring(2,4); setCardExpiry(v); }} placeholder="MM/YY" style={{ ...inp, flex: 1, marginBottom: 0 }} maxLength={5} />
+                  <input value={cardCvv} onChange={e => setCardCvv(e.target.value.replace(/\D/g,''))} placeholder="CVV" style={{ ...inp, flex: 1, marginBottom: 0 }} maxLength={4} type="password" />
+                </div>
+                <div style={{ fontSize: "0.62rem", color: "rgba(240,253,244,0.38)", marginTop: "7px", display: "flex", alignItems: "center", gap: "5px" }}>🔒 Secured by Stripe — your card info is encrypted</div>
+              </div>}
             </div>
             <div style={{ ...card, marginBottom: "10px" }}>
               {cart.map(item => (
