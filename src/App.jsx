@@ -95,6 +95,10 @@ export default function WorldShop() {
   const [cardNumber, setCardNumber] = useState("");
   const [cardExpiry, setCardExpiry] = useState("");
   const [cardCvv, setCardCvv] = useState("");
+  const [showChat, setShowChat] = useState(false);
+  const [chatMessages, setChatMessages] = useState([{role:"ai", text:"Hi! 👋 I am WorldShop AI. How can I help you today? Ask me about products, orders, delivery or anything!"}]);
+  const [chatInput, setChatInput] = useState("");
+  const [chatLoading, setChatLoading] = useState(false);
 
   const allProds = [...PRODUCTS, ...sellerProds];
   const filtered = allProds
@@ -179,6 +183,17 @@ export default function WorldShop() {
     setAiLoad(true); setAiR("");
     const r = await callAI(aiQ);
     setAiR(r); setAiLoad(false);
+  };
+
+  const sendChat = async () => {
+    if (!chatInput.trim()) return;
+    const userMsg = chatInput;
+    setChatMessages(m => [...m, {role:"user", text:userMsg}]);
+    setChatInput("");
+    setChatLoading(true);
+    const r = await callAI(userMsg, "You are WorldShop Africa customer service AI. Help customers with: products, orders, delivery, payments, selling. Be friendly and helpful. Max 80 words. Always end with a helpful suggestion.");
+    setChatMessages(m => [...m, {role:"ai", text:r}]);
+    setChatLoading(false);
   };
 
   const genDesc = async () => {
