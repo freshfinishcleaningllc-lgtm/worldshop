@@ -123,8 +123,40 @@ export default function WorldShop() {
   const notify = (msg) => { setNotif(msg); setTimeout(() => setNotif(""), 3000); };
 
   const placeOrder = async () => {
+    setPaymentLoading(true);
+
+    // Stripe Card Payment
+    if (payMethod === "stripe") {
+      try {
+        const res = await fetch("/.netlify/functions/payment", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            amount: finalTotal,
+            email: address.email || "customer@worldshop.com",
+            name: address.name,
+            phone: address.phone,
+            method: "stripe",
+            orderId: `WS-${Date.now()}`
+          })
+        });
+        const data = await res.json();
+        if (data.clientSecret) {
+          // Order placed - Stripe will handle real payment
+          setPaymentLoading(false);
+          const o = { id: `WS${Date.now()}`, items: [...cart], total: finalTotal, method: payMethod, address: { ...address }, status: "Processing", date: new Date().toLocaleDateString(), steps: ["Processing", "Confirmed", "Packed", "Shipped", "Delivered"], current: 2 };
+          setOrders(prev => [o, ...prev]);
+          setCart([]); setShowCart(false); setShowCheckout(false); setStep(1); setCouponOk(false);
+          setPage("track"); notify("✅ Order placed! Check email for payment link.");
+          return;
+        }
+      } catch(e) { console.error(e); }
+      setPaymentLoading(false);
+      return;
+    }
+
+    // Flutterwave Mobile Money
     if (payMethod === "flutterwave" && address.email) {
-      setPaymentLoading(true);
       const result = await initiateFlutterwave(finalTotal, { name: address.name, email: address.email, phone: address.phone }, `WS-${Date.now()}`);
       setPaymentLoading(false);
       if (result.paymentLink) {
@@ -132,6 +164,7 @@ export default function WorldShop() {
         return;
       }
     }
+    setPaymentLoading(false);
     const o = { id: `WS${Date.now()}`, items: [...cart], total: finalTotal, method: payMethod, address: { ...address }, status: "Processing", date: new Date().toLocaleDateString(), steps: ["Processing", "Confirmed", "Packed", "Shipped", "Delivered"], current: 2 };
     setOrders(prev => [o, ...prev]);
     setCart([]); setShowCart(false); setShowCheckout(false); setStep(1); setCouponOk(false);
