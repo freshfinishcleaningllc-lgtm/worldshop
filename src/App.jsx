@@ -28,6 +28,7 @@ const PRODUCTS = [
 ];
 
 const PAYMENT_METHODS = [
+  {id:"stripe",icon:"💳",label:"Card Payment",desc:"Visa, Mastercard, Amex — Stripe",fee:"2.9%"},
   {id:"flutterwave",icon:"🦋",label:"Flutterwave",desc:"Cards, Mobile Money, Bank Transfer",fee:"1.4%"},
   {id:"mpesa",icon:"📱",label:"M-Pesa",desc:"Kenya Mobile Money",fee:"0.5%"},
   {id:"cash",icon:"💵",label:"Cash on Delivery",desc:"Pay when you receive",fee:"Free"},
