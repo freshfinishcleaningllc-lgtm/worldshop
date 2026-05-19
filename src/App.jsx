@@ -6,6 +6,7 @@ const CATEGORIES = [
   {id:"health",icon:"💊",label:"Health"},{id:"tools",icon:"🔧",label:"Tools"},
   {id:"beauty",icon:"✨",label:"Beauty"},{id:"home",icon:"🏠",label:"Home"},
   {id:"energy",icon:"⚡",label:"Solar"},{id:"livestock",icon:"🐄",label:"Livestock"},
+  {id:"accessories",icon:"💍",label:"Accessories"},
 ];
 
 const PRODUCTS = [
