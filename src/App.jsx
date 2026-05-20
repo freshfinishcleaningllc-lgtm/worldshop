@@ -121,6 +121,8 @@ export default function WorldShop() {
   const [showSellerAlerts, setShowSellerAlerts] = useState(false);
   const [escrowBalance, setEscrowBalance] = useState(0);
   const [disputes, setDisputes] = useState([]);
+  const [trackingNumbers, setTrackingNumbers] = useState({});
+  const [trackingInput, setTrackingInput] = useState({});
   const [showChat, setShowChat] = useState(false);
   const [chatMessages, setChatMessages] = useState([{role:"ai", text:"Hi! 👋 I am WorldShop AI. How can I help you today? Ask me about products, orders, delivery or anything!"}]);
   const [chatInput, setChatInput] = useState("");
@@ -541,6 +543,10 @@ export default function WorldShop() {
                 ))}
               </div>
               {o.address && <div style={{ marginTop: "7px", fontSize: "0.62rem", color: "rgba(240,253,244,0.38)" }}>📍 Delivering to: {o.address.name}, {o.address.city}, {o.address.country}</div>}
+              {o.tracking && <div style={{ marginTop: "5px", background: "rgba(245,158,11,0.08)", borderRadius: "7px", padding: "7px 10px", fontSize: "0.68rem" }}>
+                <span style={{ color: C.gold, fontWeight: 700 }}>📦 Tracking Number: </span>
+                <span style={{ color: C.text }}>{o.tracking}</span>
+              </div>}
               <div style={{ marginTop: "10px", background: "rgba(34,197,94,0.06)", borderRadius: "9px", padding: "10px" }}>
                 <div style={{ fontSize: "0.68rem", color: C.gold, fontWeight: 700, marginBottom: "6px" }}>🔒 Payment in Escrow: ${o.total.toFixed(2)}</div>
                 <div style={{ fontSize: "0.62rem", color: "rgba(240,253,244,0.5)", marginBottom: "8px" }}>Your payment is safely held. It will only be released to the seller when YOU confirm delivery!</div>
@@ -647,7 +653,23 @@ export default function WorldShop() {
                   <button className="b" onClick={() => { setSellerAlerts(prev => prev.map(a => a.id === alert.id ? { ...a, status: "confirmed" } : a)); notify("✅ Order confirmed! Pack it now!"); }} style={{ flex: 1, background: C.accent, border: "none", borderRadius: "8px", padding: "7px", color: "#052e16", fontWeight: 700, fontSize: "0.72rem" }}>✅ I Have Stock — Confirm</button>
                   <button className="b" onClick={() => { setSellerAlerts(prev => prev.map(a => a.id === alert.id ? { ...a, status: "cancelled" } : a)); notify("❌ Order cancelled — buyer refunded"); }} style={{ flex: 1, background: "rgba(239,68,68,0.12)", border: "none", borderRadius: "8px", padding: "7px", color: C.red, fontWeight: 700, fontSize: "0.72rem" }}>❌ Out of Stock</button>
                 </div>}
-                {alert.status === "confirmed" && <div style={{ background: "rgba(34,197,94,0.08)", borderRadius: "8px", padding: "8px", fontSize: "0.72rem", color: C.accent }}>✅ Pack this order and hand to delivery! Buyer: {alert.buyer}</div>}
+                {alert.status === "confirmed" && <div style={{ background: "rgba(34,197,94,0.08)", borderRadius: "8px", padding: "8px" }}>
+                  <div style={{ fontSize: "0.72rem", color: C.accent, marginBottom: "7px" }}>✅ Pack this order and hand to delivery! Buyer: {alert.buyer}</div>
+                  {trackingNumbers[alert.id] ? (
+                    <div style={{ fontSize: "0.72rem", color: C.gold, fontWeight: 600 }}>📦 Tracking: {trackingNumbers[alert.id]} — Buyer notified!</div>
+                  ) : (
+                    <div style={{ display: "flex", gap: "6px" }}>
+                      <input value={trackingInput[alert.id] || ""} onChange={e => setTrackingInput(prev => ({...prev, [alert.id]: e.target.value}))} placeholder="Enter tracking number..." style={{ ...inp, flex: 1, marginBottom: 0, padding: "6px 10px", fontSize: "0.72rem" }} />
+                      <button className="b" onClick={() => {
+                        if(trackingInput[alert.id]) {
+                          setTrackingNumbers(prev => ({...prev, [alert.id]: trackingInput[alert.id]}));
+                          setOrders(prev => prev.map(o => o.id === alert.orderId ? {...o, tracking: trackingInput[alert.id], status: "Shipped", current: 4} : o));
+                          notify("📦 Tracking number added! Buyer notified!");
+                        }
+                      }} style={{ background: C.accent, border: "none", borderRadius: "8px", padding: "6px 11px", color: "#052e16", fontWeight: 700, fontSize: "0.68rem", flexShrink: 0 }}>Add</button>
+                    </div>
+                  )}
+                </div>}
                 {alert.status === "cancelled" && <div style={{ background: "rgba(239,68,68,0.08)", borderRadius: "8px", padding: "8px", fontSize: "0.72rem", color: C.red }}>❌ Order cancelled. Buyer will be refunded automatically.</div>}
               </div>
             ))}
