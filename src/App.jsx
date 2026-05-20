@@ -259,6 +259,7 @@ export default function WorldShop() {
     setUser(newUser);
     setShowAuth(false);
     setAuthForm({name:"",email:"",phone:"",password:""});
+    if(newUser.isSeller){ setTimeout(()=>{ document.querySelector && window.dispatchEvent(new CustomEvent('navigate', {detail:'sell'})); }, 100); }
     notify(`🎉 Welcome to WorldShop, ${newUser.name}!`);
   };
 
