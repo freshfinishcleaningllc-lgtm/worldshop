@@ -119,6 +119,8 @@ export default function WorldShop() {
   const [cardCvv, setCardCvv] = useState("");
   const [sellerAlerts, setSellerAlerts] = useState([]);
   const [showSellerAlerts, setShowSellerAlerts] = useState(false);
+  const [escrowBalance, setEscrowBalance] = useState(0);
+  const [disputes, setDisputes] = useState([]);
   const [showChat, setShowChat] = useState(false);
   const [chatMessages, setChatMessages] = useState([{role:"ai", text:"Hi! 👋 I am WorldShop AI. How can I help you today? Ask me about products, orders, delivery or anything!"}]);
   const [chatInput, setChatInput] = useState("");
@@ -539,6 +541,24 @@ export default function WorldShop() {
                 ))}
               </div>
               {o.address && <div style={{ marginTop: "7px", fontSize: "0.62rem", color: "rgba(240,253,244,0.38)" }}>📍 Delivering to: {o.address.name}, {o.address.city}, {o.address.country}</div>}
+              <div style={{ marginTop: "10px", background: "rgba(34,197,94,0.06)", borderRadius: "9px", padding: "10px" }}>
+                <div style={{ fontSize: "0.68rem", color: C.gold, fontWeight: 700, marginBottom: "6px" }}>🔒 Payment in Escrow: ${o.total.toFixed(2)}</div>
+                <div style={{ fontSize: "0.62rem", color: "rgba(240,253,244,0.5)", marginBottom: "8px" }}>Your payment is safely held. It will only be released to the seller when YOU confirm delivery!</div>
+                {o.status !== "Delivered" && o.status !== "Disputed" && <div style={{ display: "flex", gap: "6px" }}>
+                  <button className="b" onClick={() => {
+                    setOrders(prev => prev.map(ord => ord.id === o.id ? { ...ord, status: "Delivered", current: 5 } : ord));
+                    setEscrowBalance(prev => Math.max(0, prev - o.total));
+                    notify("✅ Delivery confirmed! Payment released to seller!");
+                  }} style={{ flex: 1, background: C.accent, border: "none", borderRadius: "8px", padding: "8px", color: "#052e16", fontWeight: 700, fontSize: "0.72rem" }}>✅ I Received My Order — Release Payment</button>
+                  <button className="b" onClick={() => {
+                    setOrders(prev => prev.map(ord => ord.id === o.id ? { ...ord, status: "Disputed" } : ord));
+                    setDisputes(prev => [...prev, { orderId: o.id, amount: o.total, date: new Date().toLocaleDateString() }]);
+                    notify("⚠️ Dispute opened! Payment held. We will investigate!");
+                  }} style={{ flex: 1, background: "rgba(239,68,68,0.12)", border: "none", borderRadius: "8px", padding: "8px", color: C.red, fontWeight: 700, fontSize: "0.72rem" }}>⚠️ Problem — Open Dispute</button>
+                </div>}
+                {o.status === "Delivered" && <div style={{ fontSize: "0.72rem", color: C.accent, fontWeight: 600 }}>✅ Payment released to seller! Thank you!</div>}
+                {o.status === "Disputed" && <div style={{ fontSize: "0.72rem", color: C.red, fontWeight: 600 }}>⚠️ Dispute open — payment held. WorldShop is investigating!</div>}
+              </div>
             </div>
           ))}
         </div>}
@@ -651,6 +671,12 @@ export default function WorldShop() {
         {/* ── DASHBOARD ── */}
         {page === "dashboard" && <div style={pw} className="fd">
           <h2 style={{ fontWeight: 800, fontSize: "1rem", color: C.gold, marginBottom: "12px" }}>📊 Business Analytics</h2>
+          <div style={{ ...card, marginBottom: "12px", borderColor: "rgba(245,158,11,0.3)", background: "rgba(245,158,11,0.06)" }}>
+            <div style={{ fontWeight: 700, fontSize: "0.85rem", color: C.gold, marginBottom: "5px" }}>🔒 Escrow Balance</div>
+            <div style={{ fontWeight: 900, fontSize: "1.5rem", color: C.accent }}>${escrowBalance.toFixed(2)}</div>
+            <div style={{ fontSize: "0.68rem", color: "rgba(240,253,244,0.5)", marginTop: "3px" }}>Payments held safely until buyers confirm delivery</div>
+            {disputes.length > 0 && <div style={{ marginTop: "8px", fontSize: "0.72rem", color: C.red, fontWeight: 600 }}>⚠️ {disputes.length} active dispute(s) — review needed!</div>}
+          </div>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(2,1fr)", gap: "7px", marginBottom: "12px" }}>
             {[["💰", "Revenue", "$" + sellerProds.reduce((s, p) => s + p.price * 5, 0).toFixed(0)], ["📦", "Orders", orders.length], ["👥", "Customers", orders.length * 3], ["⭐", "Rating", "5.0"]].map(([icon, label, val]) => (
               <div key={label} style={{ ...card, padding: "11px" }}>
