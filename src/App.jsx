@@ -161,6 +161,10 @@ export default function WorldShop() {
   const addToCart = (p, q = 1) => {
     setCart(c => { const ex = c.find(i => i.id === p.id); return ex ? c.map(i => i.id === p.id ? { ...i, qty: i.qty + q } : i) : [...c, { ...p, qty: q }]; });
     notify(`${p.icon} Added to cart!`);
+    // Soft nudge to register after 3rd item
+    if (cart.length === 2 && !user) {
+      setTimeout(() => notify("💡 Create a free account to save your cart & track orders!"), 2000);
+    }
   };
   const updateQty = (id, q) => { if (q < 1) removeFromCart(id); else setCart(c => c.map(i => i.id === id ? { ...i, qty: q } : i)); };
   const removeFromCart = (id) => setCart(c => c.filter(i => i.id !== id));
@@ -173,6 +177,12 @@ export default function WorldShop() {
   const notify = (msg) => { setNotif(msg); setTimeout(() => setNotif(""), 3000); };
 
   const placeOrder = async () => {
+    // Check if user is logged in
+    if (!user) {
+      setShowAuth(true);
+      notify("🔐 Please login or register to complete your order!");
+      return;
+    }
     setPaymentLoading(true);
 
     // Stripe Card Payment
