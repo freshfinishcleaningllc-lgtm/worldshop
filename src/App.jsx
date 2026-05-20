@@ -123,6 +123,21 @@ export default function WorldShop() {
   const [disputes, setDisputes] = useState([]);
   const [trackingNumbers, setTrackingNumbers] = useState({});
   const [trackingInput, setTrackingInput] = useState({});
+  // User auth
+  const [user, setUser] = useState(null);
+  const [showAuth, setShowAuth] = useState(false);
+  const [authMode, setAuthMode] = useState("login");
+  const [authForm, setAuthForm] = useState({name:"",email:"",phone:"",password:""});
+  const [users, setUsers] = useState([]);
+  // Messaging
+  const [messages, setMessages] = useState({});
+  const [showMessages, setShowMessages] = useState(false);
+  const [activeChat, setActiveChat] = useState(null);
+  const [msgInput, setMsgInput] = useState("");
+  // Delivery
+  const [selectedCourier, setSelectedCourier] = useState("dhl");
+  // Order confirmations
+  const [orderConfirmations, setOrderConfirmations] = useState([]);
   const [showChat, setShowChat] = useState(false);
   const [chatMessages, setChatMessages] = useState([{role:"ai", text:"Hi! 👋 I am WorldShop AI. How can I help you today? Ask me about products, orders, delivery or anything!"}]);
   const [chatInput, setChatInput] = useState("");
@@ -224,6 +239,47 @@ export default function WorldShop() {
     setChatLoading(false);
   };
 
+  // Auth functions
+  const registerUser = () => {
+    if (!authForm.name || !authForm.email || !authForm.password) { notify("Fill all fields!"); return; }
+    const existing = users.find(u => u.email === authForm.email);
+    if (existing) { notify("Email already registered!"); return; }
+    const newUser = { id: Date.now(), ...authForm, avatar: authForm.name[0].toUpperCase(), joined: new Date().toLocaleDateString(), orders: 0, isSeller: false };
+    setUsers(prev => [...prev, newUser]);
+    setUser(newUser);
+    setShowAuth(false);
+    setAuthForm({name:"",email:"",phone:"",password:""});
+    notify(`🎉 Welcome to WorldShop, ${newUser.name}!`);
+  };
+
+  const loginUser = () => {
+    if (!authForm.email || !authForm.password) { notify("Fill all fields!"); return; }
+    const found = users.find(u => u.email === authForm.email && u.password === authForm.password);
+    if (!found) { notify("Wrong email or password!"); return; }
+    setUser(found);
+    setShowAuth(false);
+    notify(`👋 Welcome back, ${found.name}!`);
+  };
+
+  const logoutUser = () => {
+    setUser(null);
+    notify("👋 Logged out successfully!");
+  };
+
+  // Messaging
+  const sendMessage = (sellerId, sellerName) => {
+    if (!msgInput.trim()) return;
+    const chatKey = `${user?.id || "guest"}-${sellerId}`;
+    const msg = { from: user?.name || "Guest", text: msgInput, time: new Date().toLocaleTimeString(), fromUser: true };
+    setMessages(prev => ({ ...prev, [chatKey]: [...(prev[chatKey] || []), msg] }));
+    setMsgInput("");
+    // AI auto-reply from seller
+    setTimeout(() => {
+      const reply = { from: sellerName, text: `Hi ${user?.name || "there"}! Thank you for your interest. I have this product in stock and can ship within 24 hours. Any questions?`, time: new Date().toLocaleTimeString(), fromUser: false };
+      setMessages(prev => ({ ...prev, [chatKey]: [...(prev[chatKey] || []), reply] }));
+    }, 1500);
+  };
+
   const genDesc = async () => {
     if (!newProd.name) return;
     setAiDescLoad(true);
@@ -296,6 +352,11 @@ export default function WorldShop() {
             🛒{cartCount > 0 && <span style={{ position: "absolute", top: "-5px", right: "-5px", background: C.gold, color: "#451a03", borderRadius: "50%", width: "16px", height: "16px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.52rem", fontWeight: 800 }}>{cartCount}</span>}
           </button>
           <button className="b" onClick={() => setPage("sell")} style={{ background: "rgba(245,158,11,0.12)", border: "1px solid rgba(245,158,11,0.3)", borderRadius: "8px", padding: "6px 9px", color: C.gold, fontSize: "0.65rem", fontWeight: 700 }}>💰 Sell</button>
+          {user ? (
+            <button className="b" onClick={() => setPage("profile")} style={{ width: "30px", height: "30px", borderRadius: "50%", background: C.accent, border: "none", color: "#052e16", fontWeight: 800, fontSize: "0.78rem" }}>{user.avatar}</button>
+          ) : (
+            <button className="b" onClick={() => setShowAuth(true)} style={{ background: "rgba(255,255,255,0.07)", border: `1px solid ${C.border}`, borderRadius: "8px", padding: "6px 9px", color: C.text, fontSize: "0.65rem", fontWeight: 600 }}>Login</button>
+          )}
         </div>
       </header>
 
@@ -438,9 +499,12 @@ export default function WorldShop() {
               <span>🚚{selected.delivery}</span>
             </div>
             <p style={{ fontSize: "0.75rem", color: "rgba(240,253,244,0.52)", lineHeight: 1.6, marginBottom: "10px" }}>{selected.desc}</p>
-            <div style={{ background: "rgba(34,197,94,0.06)", borderRadius: "9px", padding: "9px", marginBottom: "11px", textAlign: "left" }}>
-              <div style={{ fontWeight: 700, fontSize: "0.77rem", color: C.accent }}>👤 {selected.seller}</div>
-              <div style={{ fontSize: "0.65rem", color: "rgba(240,253,244,0.42)" }}>📍 {selected.location}</div>
+            <div style={{ background: "rgba(34,197,94,0.06)", borderRadius: "9px", padding: "9px", marginBottom: "11px", textAlign: "left", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <div>
+                <div style={{ fontWeight: 700, fontSize: "0.77rem", color: C.accent }}>👤 {selected.seller}</div>
+                <div style={{ fontSize: "0.65rem", color: "rgba(240,253,244,0.42)" }}>📍 {selected.location}</div>
+              </div>
+              <button className="b" onClick={() => { if(!user){setShowAuth(true);return;} setActiveChat({id:selected.sellerId||"S001",name:selected.seller}); setShowMessages(true); }} style={{ background: "rgba(34,197,94,0.12)", border: `1px solid ${C.border}`, borderRadius: "8px", padding: "5px 10px", color: C.accent, fontSize: "0.65rem", fontWeight: 700 }}>💬 Message</button>
             </div>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "11px", marginBottom: "11px" }}>
               <button className="b" onClick={() => setQty(q => Math.max(1, q - 1))} style={{ background: "rgba(255,255,255,0.08)", border: `1px solid ${C.border}`, borderRadius: "8px", padding: "6px 13px", color: C.text }}>−</button>
@@ -783,6 +847,34 @@ export default function WorldShop() {
           </div>}
         </div>}
 
+        {/* ── PROFILE ── */}
+        {page === "profile" && user && <div style={pw} className="fd">
+          <div style={{ ...card, textAlign: "center", marginBottom: "13px", borderColor: "rgba(34,197,94,0.3)" }}>
+            <div style={{ width: "70px", height: "70px", borderRadius: "50%", background: C.accent, margin: "0 auto 10px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1.8rem", fontWeight: 800, color: "#052e16" }}>{user.avatar}</div>
+            <div style={{ fontWeight: 800, fontSize: "1.1rem", marginBottom: "3px" }}>{user.name}</div>
+            <div style={{ fontSize: "0.75rem", color: "rgba(240,253,244,0.5)", marginBottom: "5px" }}>{user.email}</div>
+            <div style={{ fontSize: "0.7rem", color: C.accent }}>📅 Member since {user.joined}</div>
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: "8px", marginBottom: "13px" }}>
+            {[["📦","Orders",orders.length],["❤️","Wishlist",wishlist.length],["⭐","Reviews","5.0"]].map(([icon,label,val])=>(
+              <div key={label} style={{ ...card, textAlign: "center", padding: "10px" }}>
+                <div style={{ fontSize: "1.2rem" }}>{icon}</div>
+                <div style={{ fontWeight: 700, fontSize: "0.95rem", color: C.accent }}>{val}</div>
+                <div style={{ fontSize: "0.6rem", color: "rgba(240,253,244,0.4)" }}>{label}</div>
+              </div>
+            ))}
+          </div>
+          <div style={{ ...card, marginBottom: "10px" }}>
+            <div style={{ fontWeight: 700, fontSize: "0.82rem", color: C.gold, marginBottom: "10px" }}>📋 My Details</div>
+            <div style={{ fontSize: "0.75rem", color: "rgba(240,253,244,0.6)", lineHeight: 2 }}>
+              <div>👤 <strong>Name:</strong> {user.name}</div>
+              <div>📧 <strong>Email:</strong> {user.email}</div>
+              <div>📱 <strong>Phone:</strong> {user.phone || "Not added"}</div>
+            </div>
+          </div>
+          <button className="b" onClick={logoutUser} style={{ width: "100%", background: "rgba(239,68,68,0.12)", border: "1px solid rgba(239,68,68,0.3)", borderRadius: "10px", padding: "11px", color: C.red, fontWeight: 700, fontSize: "0.85rem" }}>🚪 Logout</button>
+        </div>}
+
         {/* ── COMPARE ── */}
         {page === "compare" && <div style={pw} className="fd">
           <h2 style={{ fontWeight: 800, fontSize: "1rem", color: C.gold, marginBottom: "5px" }}>⚖️ Compare Products</h2>
@@ -969,6 +1061,18 @@ export default function WorldShop() {
               <div style={{ fontSize: "0.65rem", color: "rgba(240,253,244,0.42)", marginBottom: "3px" }}>💳 Payment:</div>
               <div style={{ fontWeight: 600, fontSize: "0.78rem" }}>{PAYMENT_METHODS.find(m => m.id === payMethod)?.icon} {PAYMENT_METHODS.find(m => m.id === payMethod)?.label}</div>
               {payMethod === "flutterwave" && address.email && <div style={{ fontSize: "0.65rem", color: "rgba(240,253,244,0.42)", marginTop: "2px" }}>You will be redirected to Flutterwave to complete payment securely.</div>}
+              <div style={{ marginTop: "12px" }}>
+                <div style={{ fontWeight: 700, fontSize: "0.78rem", color: C.gold, marginBottom: "8px" }}>🚚 Choose Delivery Partner</div>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "6px" }}>
+                  {[["dhl","DHL Express","2-3 days","$5"],["fedex","FedEx","3-5 days","$7"],["local","Local Courier","1-2 days","$3"],["dispatch","Dispatch Rider","Same day","$2"],["pickup","Self Pickup","Flexible","FREE"],["pos","Post Office","5-7 days","$2"]].map(([id,name,time,cost])=>(
+                    <button key={id} onClick={()=>setSelectedCourier(id)} style={{background:selectedCourier===id?"rgba(34,197,94,0.1)":"rgba(255,255,255,0.03)",border:`1px solid ${selectedCourier===id?C.accent:C.border}`,borderRadius:"8px",padding:"7px",textAlign:"left",cursor:"pointer",fontFamily:"inherit"}}>
+                      <div style={{fontWeight:700,fontSize:"0.68rem",color:selectedCourier===id?C.accent:C.text}}>{name}</div>
+                      <div style={{fontSize:"0.58rem",color:"rgba(240,253,244,0.4)"}}>{time}</div>
+                      <div style={{fontSize:"0.6rem",color:C.gold,fontWeight:600}}>{cost}</div>
+                    </button>
+                  ))}
+                </div>
+              </div>
               {payMethod === "stripe" && <div style={{ marginTop: "8px", background: "rgba(255,255,255,0.04)", borderRadius: "10px", padding: "12px" }}>
                 <div style={{ fontWeight: 700, fontSize: "0.78rem", color: C.accent, marginBottom: "10px" }}>💳 Enter Card Details</div>
                 <input value={cardNumber} onChange={e => setCardNumber(e.target.value.replace(/\D/g,'').replace(/(.{4})/g,'$1 ').trim().substring(0,19))} placeholder="Card number (1234 5678 9012 3456)" style={{ ...inp, marginBottom: "8px", letterSpacing: "2px" }} maxLength={19} />
