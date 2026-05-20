@@ -110,7 +110,7 @@ export default function WorldShop() {
   const [couponOk, setCouponOk] = useState(false);
   const [country, setCountry] = useState("🇳🇬 Nigeria");
   const [address, setAddress] = useState({ name: "", phone: "", email: "", street: "", city: "", country: "" });
-  const [newProd, setNewProd] = useState({ name: "", price: "", category: "food", location: "", stock: "", desc: "" });
+  const [newProd, setNewProd] = useState({ name: "", price: "", category: "food", location: "", stock: "", desc: "", weight: "", dimensions: "" });
   const [compareList, setCompareList] = useState([]);
   const [showFilters, setShowFilters] = useState(false);
   const [paymentLoading, setPaymentLoading] = useState(false);
@@ -235,7 +235,7 @@ export default function WorldShop() {
     if (!newProd.name || !newProd.price) return;
     const p = { id: Date.now(), ...newProd, price: parseFloat(newProd.price) || 0, stock: parseInt(newProd.stock) || 10, rating: 5.0, reviews: 0, seller: "You", badge: "New", delivery: "3-5 days", icon: "📦" };
     setSellerProds(s => [p, ...s]);
-    setNewProd({ name: "", price: "", category: "food", location: "", stock: "", desc: "" });
+    setNewProd({ name: "", price: "", category: "food", location: "", stock: "", desc: "", weight: "", dimensions: "" });
     notify("🎉 Product listed successfully!");
   };
 
@@ -606,6 +606,10 @@ export default function WorldShop() {
               </select>
               <input value={newProd.location} onChange={e => setNewProd(p => ({ ...p, location: e.target.value }))} placeholder="City, Country" style={{ ...inp, flex: 1, marginBottom: 0 }} />
             </div>
+            <div style={{ display: "flex", gap: "6px", marginBottom: "8px" }}>
+              <input value={newProd.weight} onChange={e => setNewProd(p => ({ ...p, weight: e.target.value }))} placeholder="Weight (kg) e.g. 0.5" style={{ ...inp, flex: 1, marginBottom: 0 }} />
+              <input value={newProd.dimensions} onChange={e => setNewProd(p => ({ ...p, dimensions: e.target.value }))} placeholder="Size e.g. 30x20x10cm" style={{ ...inp, flex: 1, marginBottom: 0 }} />
+            </div>
             <div style={{ position: "relative", marginBottom: "8px" }}>
               <textarea value={newProd.desc} onChange={e => setNewProd(p => ({ ...p, desc: e.target.value }))} placeholder="Product description..." rows={3} style={{ ...inp, resize: "vertical", marginBottom: 0 }} />
               <button className="b" onClick={genDesc} disabled={aiDescLoad} style={{ position: "absolute", right: "7px", bottom: "7px", background: "rgba(34,197,94,0.15)", border: `1px solid ${C.border}`, borderRadius: "6px", padding: "3px 8px", color: C.accent, fontSize: "0.58rem", fontWeight: 700 }}>{aiDescLoad ? "..." : "🤖 AI Write"}</button>
@@ -654,7 +658,15 @@ export default function WorldShop() {
                   <button className="b" onClick={() => { setSellerAlerts(prev => prev.map(a => a.id === alert.id ? { ...a, status: "cancelled" } : a)); notify("❌ Order cancelled — buyer refunded"); }} style={{ flex: 1, background: "rgba(239,68,68,0.12)", border: "none", borderRadius: "8px", padding: "7px", color: C.red, fontWeight: 700, fontSize: "0.72rem" }}>❌ Out of Stock</button>
                 </div>}
                 {alert.status === "confirmed" && <div style={{ background: "rgba(34,197,94,0.08)", borderRadius: "8px", padding: "8px" }}>
-                  <div style={{ fontSize: "0.72rem", color: C.accent, marginBottom: "7px" }}>✅ Pack this order and hand to delivery! Buyer: {alert.buyer}</div>
+                  <div style={{ fontSize: "0.72rem", color: C.accent, marginBottom: "7px" }}>✅ Order confirmed! Pack and ship NOW!</div>
+                  <div style={{ background: "rgba(34,197,94,0.06)", borderRadius: "8px", padding: "9px", marginBottom: "7px", fontSize: "0.68rem" }}>
+                    <div style={{ fontWeight: 700, color: C.gold, marginBottom: "5px" }}>📦 SHIPPING INSTRUCTIONS:</div>
+                    <div style={{ color: C.text, marginBottom: "3px" }}>👤 <strong>Ship To:</strong> {alert.buyer}</div>
+                    <div style={{ color: "rgba(240,253,244,0.7)", marginBottom: "3px" }}>📱 <strong>WhatsApp buyer</strong> before shipping</div>
+                    <div style={{ color: "rgba(240,253,244,0.7)", marginBottom: "3px" }}>📸 <strong>Take photo</strong> of packed item</div>
+                    <div style={{ color: "rgba(240,253,244,0.7)", marginBottom: "3px" }}>🚚 <strong>Use:</strong> DHL, FedEx, local courier or dispatch rider</div>
+                    <div style={{ color: "rgba(240,253,244,0.7)" }}>💰 <strong>Payment:</strong> ${alert.amount} in escrow — released after delivery!</div>
+                  </div>
                   {trackingNumbers[alert.id] ? (
                     <div style={{ fontSize: "0.72rem", color: C.gold, fontWeight: 600 }}>📦 Tracking: {trackingNumbers[alert.id]} — Buyer notified!</div>
                   ) : (
@@ -682,7 +694,7 @@ export default function WorldShop() {
                 <span style={{ fontSize: "1.5rem" }}>{p.icon}</span>
                 <div style={{ flex: 1 }}>
                   <div style={{ fontWeight: 700, fontSize: "0.75rem" }}>{p.name}</div>
-                  <div style={{ fontSize: "0.62rem", color: "rgba(240,253,244,0.4)" }}>${p.price} · {p.stock} in stock · 📍{p.location}</div>
+                  <div style={{ fontSize: "0.62rem", color: "rgba(240,253,244,0.4)" }}>${p.price} · {p.stock} in stock · 📍{p.location}{p.weight ? ` · ⚖️${p.weight}kg` : ""}{p.dimensions ? ` · 📐${p.dimensions}` : ""}</div>
                 </div>
                 <span style={{ background: "rgba(34,197,94,0.1)", color: C.accent, borderRadius: "6px", padding: "2px 7px", fontSize: "0.58rem", fontWeight: 700 }}>Active</span>
               </div>
