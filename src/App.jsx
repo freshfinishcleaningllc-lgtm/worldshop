@@ -250,17 +250,21 @@ export default function WorldShop() {
   };
 
   // Auth functions
-  const registerUser = () => {
-    if (!authForm.name || !authForm.email || !authForm.password) { notify("Fill all fields!"); return; }
+  const registerUser = (isSeller = false) => {
+    if (!authForm.name || !authForm.email || !authForm.password) { notify("Fill all required fields!"); return; }
     const existing = users.find(u => u.email === authForm.email);
     if (existing) { notify("Email already registered!"); return; }
-    const newUser = { id: Date.now(), ...authForm, avatar: authForm.name[0].toUpperCase(), joined: new Date().toLocaleDateString(), orders: 0, isSeller: false };
+    const newUser = { id: Date.now(), ...authForm, avatar: authForm.name[0].toUpperCase(), joined: new Date().toLocaleDateString(), orders: 0, isSeller };
     setUsers(prev => [...prev, newUser]);
     setUser(newUser);
     setShowAuth(false);
     setAuthForm({name:"",email:"",phone:"",password:""});
-    if(newUser.isSeller){ setTimeout(()=>{ document.querySelector && window.dispatchEvent(new CustomEvent('navigate', {detail:'sell'})); }, 100); }
-    notify(`🎉 Welcome to WorldShop, ${newUser.name}!`);
+    if (isSeller) {
+      setPage("sell");
+      notify("🎉 Welcome seller " + newUser.name + "! Start listing your products!");
+    } else {
+      notify("🎉 Welcome to WorldShop, " + newUser.name + "!");
+    }
   };
 
   const loginUser = () => {
@@ -989,6 +993,80 @@ export default function WorldShop() {
               <a href={"https://"+url} target="_blank" rel="noreferrer" style={{background:"rgba(34,197,94,0.12)",border:"1px solid rgba(34,197,94,0.2)",borderRadius:"7px",padding:"5px 10px",color:C.accent,fontSize:"0.65rem",fontWeight:700,textDecoration:"none"}}>Connect →</a>
             </div>
           ))}
+        </div>
+      </div>}
+
+      {/* ── AUTH MODAL ── */}
+      {showAuth && <div style={{position:"fixed",inset:0,zIndex:500,background:"rgba(0,0,0,0.85)",display:"flex",alignItems:"center",justifyContent:"center",padding:"20px"}} onClick={()=>setShowAuth(false)}>
+        <div onClick={e=>e.stopPropagation()} style={{width:"100%",maxWidth:"400px",background:"#0a1208",borderRadius:"20px",border:"1px solid rgba(34,197,94,0.3)",padding:"24px"}}>
+          <div style={{fontWeight:800,fontSize:"1.1rem",color:"#22c55e",textAlign:"center",marginBottom:"5px"}}>
+            {authMode==="login"?"👋 Welcome Back":authMode==="seller"?"💰 Become A Seller":"🎉 Join WorldShop"}
+          </div>
+          <div style={{fontSize:"0.75rem",color:"rgba(240,253,244,0.45)",textAlign:"center",marginBottom:"14px"}}>
+            {authMode==="login"?"Sign in to your account":authMode==="seller"?"Start selling FREE today":"Create your free account"}
+          </div>
+
+          {/* Account type tabs */}
+          {authMode !== "login" && <div style={{display:"flex",gap:"8px",marginBottom:"14px"}}>
+            <button onClick={()=>setAuthMode("register")} style={{flex:1,background:authMode==="register"?"rgba(34,197,94,0.12)":"rgba(255,255,255,0.04)",border:"1px solid "+(authMode==="register"?"#22c55e":"rgba(34,197,94,0.18)"),borderRadius:"10px",padding:"10px",cursor:"pointer",fontFamily:"inherit",color:"#f0fdf4"}}>
+              <div style={{fontSize:"1.2rem"}}>🛒</div>
+              <div style={{fontWeight:700,fontSize:"0.75rem",color:authMode==="register"?"#22c55e":"#f0fdf4"}}>Buyer</div>
+            </button>
+            <button onClick={()=>setAuthMode("seller")} style={{flex:1,background:authMode==="seller"?"rgba(245,158,11,0.12)":"rgba(255,255,255,0.04)",border:"1px solid "+(authMode==="seller"?"#f59e0b":"rgba(34,197,94,0.18)"),borderRadius:"10px",padding:"10px",cursor:"pointer",fontFamily:"inherit",color:"#f0fdf4"}}>
+              <div style={{fontSize:"1.2rem"}}>💰</div>
+              <div style={{fontWeight:700,fontSize:"0.75rem",color:authMode==="seller"?"#f59e0b":"#f0fdf4"}}>Seller</div>
+            </button>
+          </div>}
+
+          {/* Benefits */}
+          {authMode==="seller" && <div style={{background:"rgba(245,158,11,0.06)",borderRadius:"10px",padding:"10px",marginBottom:"14px",fontSize:"0.72rem",color:"rgba(240,253,244,0.7)",lineHeight:1.8}}>
+            ✅ List products FREE<br/>✅ Reach 50+ countries<br/>✅ Get paid same day<br/>✅ AI writes descriptions<br/>🆓 No fees ever!
+          </div>}
+          {authMode==="register" && <div style={{background:"rgba(34,197,94,0.06)",borderRadius:"10px",padding:"10px",marginBottom:"14px",fontSize:"0.72rem",color:"rgba(240,253,244,0.7)",lineHeight:1.8}}>
+            ✅ Track your orders<br/>✅ Save wishlist<br/>✅ Message sellers<br/>✅ Get exclusive deals<br/>🆓 100% FREE!
+          </div>}
+
+          {/* Form fields */}
+          {authMode !== "login" && <input value={authForm.name} onChange={e=>setAuthForm(a=>({...a,name:e.target.value}))} placeholder={authMode==="seller"?"Your name / Business name *":"Full name *"} style={{width:"100%",background:"rgba(255,255,255,0.06)",border:"1px solid rgba(34,197,94,0.18)",borderRadius:"9px",padding:"9px 12px",color:"#f0fdf4",fontSize:"0.82rem",fontFamily:"inherit",marginBottom:"8px"}}/>}
+          <input value={authForm.email} onChange={e=>setAuthForm(a=>({...a,email:e.target.value}))} placeholder="Email address *" type="email" style={{width:"100%",background:"rgba(255,255,255,0.06)",border:"1px solid rgba(34,197,94,0.18)",borderRadius:"9px",padding:"9px 12px",color:"#f0fdf4",fontSize:"0.82rem",fontFamily:"inherit",marginBottom:"8px"}}/>
+          {authMode !== "login" && <input value={authForm.phone} onChange={e=>setAuthForm(a=>({...a,phone:e.target.value}))} placeholder="Phone / WhatsApp *" style={{width:"100%",background:"rgba(255,255,255,0.06)",border:"1px solid rgba(34,197,94,0.18)",borderRadius:"9px",padding:"9px 12px",color:"#f0fdf4",fontSize:"0.82rem",fontFamily:"inherit",marginBottom:"8px"}}/>}
+          {authMode==="seller" && <input value={authForm.location||""} onChange={e=>setAuthForm(a=>({...a,location:e.target.value}))} placeholder="City, Country *" style={{width:"100%",background:"rgba(255,255,255,0.06)",border:"1px solid rgba(34,197,94,0.18)",borderRadius:"9px",padding:"9px 12px",color:"#f0fdf4",fontSize:"0.82rem",fontFamily:"inherit",marginBottom:"8px"}}/>}
+          <input value={authForm.password} onChange={e=>setAuthForm(a=>({...a,password:e.target.value}))} placeholder="Password *" type="password" style={{width:"100%",background:"rgba(255,255,255,0.06)",border:"1px solid rgba(34,197,94,0.18)",borderRadius:"9px",padding:"9px 12px",color:"#f0fdf4",fontSize:"0.82rem",fontFamily:"inherit",marginBottom:"12px"}}/>
+
+          {/* Submit button */}
+          <button className="b" onClick={()=>{ authMode==="login" ? loginUser() : registerUser(authMode==="seller"); }} style={{width:"100%",background:authMode==="seller"?"#f59e0b":"#22c55e",border:"none",borderRadius:"10px",padding:"12px",color:"#052e16",fontWeight:800,fontSize:"0.88rem",marginBottom:"12px",fontFamily:"inherit"}}>
+            {authMode==="login"?"Sign In →":authMode==="seller"?"Start Selling FREE →":"Create Free Account →"}
+          </button>
+
+          <div style={{textAlign:"center",fontSize:"0.75rem",color:"rgba(240,253,244,0.45)"}}>
+            {authMode==="login"?"Don't have an account? ":"Already have an account? "}
+            <span onClick={()=>setAuthMode(authMode==="login"?"register":"login")} style={{color:"#22c55e",cursor:"pointer",fontWeight:600}}>{authMode==="login"?"Sign up free":"Sign in"}</span>
+          </div>
+        </div>
+      </div>}
+
+      {/* ── MESSAGES MODAL ── */}
+      {showMessages && activeChat && <div style={{position:"fixed",inset:0,zIndex:500,background:"rgba(0,0,0,0.8)",display:"flex",alignItems:"flex-end"}} onClick={()=>setShowMessages(false)}>
+        <div onClick={e=>e.stopPropagation()} style={{width:"100%",maxWidth:"900px",margin:"0 auto",background:"#0a1208",borderRadius:"20px 20px 0 0",border:"1px solid rgba(34,197,94,0.18)",padding:"16px",maxHeight:"80vh",display:"flex",flexDirection:"column"}}>
+          <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:"12px"}}>
+            <div style={{fontWeight:700,fontSize:"0.88rem",color:"#f59e0b"}}>💬 Chat with {activeChat.name}</div>
+            <button className="b" onClick={()=>setShowMessages(false)} style={{background:"transparent",border:"none",color:"rgba(240,253,244,0.5)",fontSize:"1rem",fontFamily:"inherit"}}>✕</button>
+          </div>
+          <div style={{flex:1,overflowY:"auto",marginBottom:"10px",minHeight:"200px",display:"flex",flexDirection:"column",gap:"8px",padding:"4px"}}>
+            {(messages[user?.id+"-"+activeChat.id]||[]).length===0 && <div style={{textAlign:"center",color:"rgba(240,253,244,0.3)",fontSize:"0.75rem",padding:"20px"}}>Start a conversation with {activeChat.name}!</div>}
+            {(messages[user?.id+"-"+activeChat.id]||[]).map((m,i)=>(
+              <div key={i} style={{display:"flex",justifyContent:m.fromUser?"flex-end":"flex-start"}}>
+                <div style={{maxWidth:"75%",background:m.fromUser?"rgba(34,197,94,0.15)":"rgba(255,255,255,0.06)",borderRadius:"10px",padding:"8px 12px",fontSize:"0.78rem",lineHeight:1.5,color:"#f0fdf4"}}>
+                  <div style={{fontSize:"0.62rem",color:"rgba(240,253,244,0.4)",marginBottom:"3px"}}>{m.from} · {m.time}</div>
+                  {m.text}
+                </div>
+              </div>
+            ))}
+          </div>
+          <div style={{display:"flex",gap:"7px"}}>
+            <input value={msgInput} onChange={e=>setMsgInput(e.target.value)} onKeyDown={e=>e.key==="Enter"&&sendMessage(activeChat.id,activeChat.name)} placeholder="Type a message..." style={{flex:1,background:"rgba(255,255,255,0.06)",border:"1px solid rgba(34,197,94,0.18)",borderRadius:"9px",padding:"9px 12px",color:"#f0fdf4",fontSize:"0.75rem",fontFamily:"inherit"}}/>
+            <button className="b" onClick={()=>sendMessage(activeChat.id,activeChat.name)} style={{background:"#22c55e",border:"none",borderRadius:"9px",padding:"9px 14px",color:"#052e16",fontWeight:800,fontFamily:"inherit"}}>Send</button>
+          </div>
         </div>
       </div>}
 
