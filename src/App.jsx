@@ -647,6 +647,17 @@ export default function WorldShop() {
         {page === "sell" && <div style={pw} className="fd">
           <h2 style={{ fontWeight: 800, fontSize: "1rem", color: C.gold, marginBottom: "5px" }}>💰 Seller Dashboard</h2>
           <p style={{ fontSize: "0.75rem", color: "rgba(240,253,244,0.42)", marginBottom: "12px" }}>List products, track sales, manage your business on WorldShop.</p>
+          {!user && <div style={{ ...card, marginBottom: "13px", borderColor: "rgba(245,158,11,0.3)", background: "rgba(245,158,11,0.06)", textAlign: "center", padding: "20px" }}>
+            <div style={{ fontSize: "2rem", marginBottom: "8px" }}>💰</div>
+            <div style={{ fontWeight: 700, fontSize: "0.88rem", color: C.gold, marginBottom: "5px" }}>Register as a Seller!</div>
+            <div style={{ fontSize: "0.75rem", color: "rgba(240,253,244,0.5)", marginBottom: "13px", lineHeight: 1.6 }}>Create your FREE seller account to list products and start earning!</div>
+            <button className="b" onClick={() => { setAuthMode("seller"); setShowAuth(true); }} style={{ background: C.gold, border: "none", borderRadius: "10px", padding: "10px 20px", color: "#451a03", fontWeight: 800, fontSize: "0.85rem" }}>💰 Become A Seller — FREE</button>
+          </div>}
+          {user && !user.isSeller && <div style={{ ...card, marginBottom: "13px", borderColor: "rgba(245,158,11,0.3)", background: "rgba(245,158,11,0.06)", textAlign: "center", padding: "16px" }}>
+            <div style={{ fontWeight: 700, fontSize: "0.82rem", color: C.gold, marginBottom: "5px" }}>🛒 You have a Buyer account</div>
+            <div style={{ fontSize: "0.72rem", color: "rgba(240,253,244,0.5)", marginBottom: "10px" }}>Upgrade to sell products on WorldShop!</div>
+            <button className="b" onClick={() => { setUser(u => ({...u, isSeller: true})); notify("🎉 Seller account activated!"); }} style={{ background: C.gold, border: "none", borderRadius: "9px", padding: "8px 16px", color: "#451a03", fontWeight: 700, fontSize: "0.78rem" }}>Activate Seller Account</button>
+          </div>}
 
           <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: "6px", marginBottom: "12px" }}>
             {[[`${sellerProds.length}`, "Products"], ["$" + sellerProds.reduce((s, p) => s + p.price * 5, 0).toFixed(0), "Revenue"], ["⭐ 5.0", "Rating"]].map(([n, l]) => (
@@ -880,6 +891,9 @@ export default function WorldShop() {
               <div>👤 <strong>Name:</strong> {user.name}</div>
               <div>📧 <strong>Email:</strong> {user.email}</div>
               <div>📱 <strong>Phone:</strong> {user.phone || "Not added"}</div>
+              <div>🏷️ <strong>Account:</strong> <span style={{color:user.isSeller?C.gold:C.accent,fontWeight:600}}>{user.isSeller?"💰 Seller":"🛒 Buyer"}</span></div>
+              {user.business && <div>🏢 <strong>Business:</strong> {user.business}</div>}
+              {user.location && <div>📍 <strong>Location:</strong> {user.location}</div>}
             </div>
           </div>
           <button className="b" onClick={logoutUser} style={{ width: "100%", background: "rgba(239,68,68,0.12)", border: "1px solid rgba(239,68,68,0.3)", borderRadius: "10px", padding: "11px", color: C.red, fontWeight: 700, fontSize: "0.85rem" }}>🚪 Logout</button>
