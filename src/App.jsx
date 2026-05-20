@@ -117,6 +117,8 @@ export default function WorldShop() {
   const [cardNumber, setCardNumber] = useState("");
   const [cardExpiry, setCardExpiry] = useState("");
   const [cardCvv, setCardCvv] = useState("");
+  const [sellerAlerts, setSellerAlerts] = useState([]);
+  const [showSellerAlerts, setShowSellerAlerts] = useState(false);
   const [showChat, setShowChat] = useState(false);
   const [chatMessages, setChatMessages] = useState([{role:"ai", text:"Hi! 👋 I am WorldShop AI. How can I help you today? Ask me about products, orders, delivery or anything!"}]);
   const [chatInput, setChatInput] = useState("");
@@ -602,6 +604,34 @@ export default function WorldShop() {
               ))}
             </div>
           </div>
+
+          {/* Seller Order Alerts */}
+          {sellerAlerts.length > 0 && <div style={{ marginTop: "12px", marginBottom: "12px" }}>
+            <div style={{ fontWeight: 700, fontSize: "0.82rem", color: C.red, marginBottom: "9px", display: "flex", alignItems: "center", gap: "7px" }}>
+              🔔 New Orders — Action Required!
+              <span style={{ background: C.red, color: "#fff", borderRadius: "50%", width: "18px", height: "18px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.6rem", fontWeight: 800 }}>{sellerAlerts.filter(a => a.status === "pending").length}</span>
+            </div>
+            {sellerAlerts.map(alert => (
+              <div key={alert.id} style={{ ...card, marginBottom: "8px", borderColor: alert.status === "pending" ? "rgba(239,68,68,0.4)" : alert.status === "confirmed" ? "rgba(34,197,94,0.4)" : "rgba(255,255,255,0.1)" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "7px", flexWrap: "wrap", gap: "4px" }}>
+                  <div>
+                    <div style={{ fontWeight: 700, fontSize: "0.78rem" }}>{alert.icon} {alert.product} ×{alert.qty}</div>
+                    <div style={{ fontSize: "0.65rem", color: C.dim }}>Buyer: {alert.buyer} · ${alert.amount} · {alert.time}</div>
+                  </div>
+                  <span style={{ background: alert.status === "pending" ? "rgba(239,68,68,0.15)" : alert.status === "confirmed" ? "rgba(34,197,94,0.15)" : "rgba(255,255,255,0.08)", color: alert.status === "pending" ? C.red : alert.status === "confirmed" ? C.accent : C.dim, borderRadius: "7px", padding: "2px 8px", fontSize: "0.62rem", fontWeight: 700 }}>
+                    {alert.status === "pending" ? "⏰ ACTION NEEDED" : alert.status === "confirmed" ? "✅ Confirmed" : "❌ Cancelled"}
+                  </span>
+                </div>
+                {alert.status === "pending" && <div style={{ fontSize: "0.65rem", color: C.gold, marginBottom: "8px" }}>⚠️ Confirm by: {alert.deadline} or order auto-cancels!</div>}
+                {alert.status === "pending" && <div style={{ display: "flex", gap: "6px" }}>
+                  <button className="b" onClick={() => { setSellerAlerts(prev => prev.map(a => a.id === alert.id ? { ...a, status: "confirmed" } : a)); notify("✅ Order confirmed! Pack it now!"); }} style={{ flex: 1, background: C.accent, border: "none", borderRadius: "8px", padding: "7px", color: "#052e16", fontWeight: 700, fontSize: "0.72rem" }}>✅ I Have Stock — Confirm</button>
+                  <button className="b" onClick={() => { setSellerAlerts(prev => prev.map(a => a.id === alert.id ? { ...a, status: "cancelled" } : a)); notify("❌ Order cancelled — buyer refunded"); }} style={{ flex: 1, background: "rgba(239,68,68,0.12)", border: "none", borderRadius: "8px", padding: "7px", color: C.red, fontWeight: 700, fontSize: "0.72rem" }}>❌ Out of Stock</button>
+                </div>}
+                {alert.status === "confirmed" && <div style={{ background: "rgba(34,197,94,0.08)", borderRadius: "8px", padding: "8px", fontSize: "0.72rem", color: C.accent }}>✅ Pack this order and hand to delivery! Buyer: {alert.buyer}</div>}
+                {alert.status === "cancelled" && <div style={{ background: "rgba(239,68,68,0.08)", borderRadius: "8px", padding: "8px", fontSize: "0.72rem", color: C.red }}>❌ Order cancelled. Buyer will be refunded automatically.</div>}
+              </div>
+            ))}
+          </div>}
 
           {sellerProds.length > 0 && <div style={{ marginTop: "12px" }}>
             <div style={{ fontSize: "0.65rem", color: "rgba(240,253,244,0.35)", letterSpacing: "1px", marginBottom: "6px" }}>MY PRODUCTS ({sellerProds.length})</div>
