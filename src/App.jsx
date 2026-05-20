@@ -7,6 +7,13 @@ const CATEGORIES = [
   {id:"beauty",icon:"✨",label:"Beauty"},{id:"home",icon:"🏠",label:"Home"},
   {id:"energy",icon:"⚡",label:"Solar"},{id:"livestock",icon:"🐄",label:"Livestock"},
   {id:"accessories",icon:"💍",label:"Accessories"},
+  {id:"furniture",icon:"🪑",label:"Furniture"},
+  {id:"drinks",icon:"🍕",label:"Food & Drinks"},
+  {id:"gaming",icon:"🎮",label:"Gaming"},
+  {id:"auto",icon:"🚗",label:"Auto Parts"},
+  {id:"baby",icon:"👶",label:"Baby"},
+  {id:"books",icon:"📚",label:"Books"},
+  {id:"pets",icon:"🐾",label:"Pets"},
 ];
 
 const PRODUCTS = [
@@ -26,6 +33,20 @@ const PRODUCTS = [
   {id:14,name:"Rice 50kg Premium",price:38,rating:4.7,reviews:892,seller:"GrainMaster Ghana",location:"Kumasi, Ghana",category:"food",icon:"🍚",badge:"Popular",delivery:"2 days",stock:300,desc:"Long grain premium rice. Parboiled for perfect cooking every time."},
   {id:15,name:"Solar Phone Charger",price:15,rating:4.8,reviews:334,seller:"SolarAfrica Co.",location:"Accra, Ghana",category:"energy",icon:"🔌",badge:"Must Have",delivery:"3 days",stock:78,desc:"Charges any phone using solar energy. Waterproof. Perfect for off-grid areas."},
   {id:16,name:"Motorcycle Battery 12V",price:32,rating:4.5,reviews:178,seller:"AutoParts Kenya",location:"Mombasa, Kenya",category:"tools",icon:"🔋",badge:"Quality",delivery:"2 days",stock:56,desc:"High-performance 12V motorcycle battery. 18-month warranty. All major brands."},
+  {id:23,name:"Wooden Coffee Table",price:45,rating:4.7,reviews:123,seller:"WoodWorks Lagos",location:"Lagos, Nigeria",category:"furniture",icon:"🪑",badge:"Handmade",delivery:"7 days",stock:12,desc:"Beautiful handcrafted wooden coffee table. Solid African mahogany. Lasts a lifetime."},
+  {id:24,name:"African Rattan Chair",price:38,rating:4.6,reviews:89,seller:"CraftHome Ghana",location:"Accra, Ghana",category:"furniture",icon:"🛋️",badge:"Popular",delivery:"6 days",stock:18,desc:"Comfortable rattan chair handwoven by African craftsmen. Perfect for home or office."},
+  {id:25,name:"Palm Wine 2 Litres",price:5,rating:4.8,reviews:334,seller:"PalmWine Nigeria",location:"Ibadan, Nigeria",category:"drinks",icon:"🍶",badge:"Traditional",delivery:"Same day",stock:200,desc:"Fresh natural palm wine. Tapped daily from African palm trees. Sweet and refreshing."},
+  {id:26,name:"Zobo Drink 1 Litre",price:3,rating:4.9,reviews:567,seller:"ZoboQueen Abuja",location:"Abuja, Nigeria",category:"drinks",icon:"🥤",badge:"Fresh",delivery:"Same day",stock:150,desc:"Natural zobo drink made from hibiscus flowers. No preservatives. Refreshing and healthy."},
+  {id:27,name:"Mobile Gaming Controller",price:25,rating:4.6,reviews:234,seller:"TechHub Lagos",location:"Lagos, Nigeria",category:"gaming",icon:"🎮",badge:"Popular",delivery:"3 days",stock:45,desc:"Bluetooth gaming controller for mobile phones. Compatible with all Android and iOS games."},
+  {id:28,name:"Gaming Headset",price:22,rating:4.5,reviews:189,seller:"TechHub Lagos",location:"Lagos, Nigeria",category:"gaming",icon:"🎧",badge:"Quality",delivery:"3 days",stock:34,desc:"High quality gaming headset with microphone. Crystal clear sound. USB and 3.5mm jack."},
+  {id:29,name:"Car Phone Holder",price:8,rating:4.7,reviews:445,seller:"AutoParts Kenya",location:"Nairobi, Kenya",category:"auto",icon:"🚗",badge:"Must Have",delivery:"2 days",stock:89,desc:"Universal car phone holder. Fits all phone sizes. Strong magnetic grip. Easy installation."},
+  {id:30,name:"Car Air Freshener",price:4,rating:4.8,reviews:678,seller:"AutoCare Ghana",location:"Kumasi, Ghana",category:"auto",icon:"🌸",badge:"Popular",delivery:"2 days",stock:234,desc:"Long lasting car air freshener. African scents including cocoa and shea butter fragrance."},
+  {id:31,name:"Baby Carrier Wrap",price:18,rating:4.9,reviews:567,seller:"MamaAfrica Kenya",location:"Nairobi, Kenya",category:"baby",icon:"👶",badge:"Safe",delivery:"4 days",stock:56,desc:"Traditional African baby carrier wrap. 100% cotton. Safe and comfortable for babies 0-24 months."},
+  {id:32,name:"Baby Food Organic",price:7,rating:4.8,reviews:334,seller:"BabyNature Uganda",location:"Kampala, Uganda",category:"baby",icon:"🍼",badge:"Organic",delivery:"2 days",stock:123,desc:"100% organic baby food made from African fruits and vegetables. No additives or preservatives."},
+  {id:33,name:"African History Books Set",price:28,rating:4.9,reviews:234,seller:"AfriBooks Lagos",location:"Lagos, Nigeria",category:"books",icon:"📚",badge:"Educational",delivery:"4 days",stock:67,desc:"Set of 5 books about African history, culture and civilization. Perfect for students and adults."},
+  {id:34,name:"Swahili Language Guide",price:12,rating:4.7,reviews:189,seller:"AfriBooks Nairobi",location:"Nairobi, Kenya",category:"books",icon:"📖",badge:"Popular",delivery:"3 days",stock:45,desc:"Complete Swahili language learning guide. Includes phrases, grammar and exercises."},
+  {id:35,name:"Dog Food Premium 5kg",price:15,rating:4.6,reviews:234,seller:"PetCare Nigeria",location:"Lagos, Nigeria",category:"pets",icon:"🐕",badge:"Quality",delivery:"2 days",stock:78,desc:"Premium dog food with African beef and vegetables. Complete nutrition for all dog breeds."},
+  {id:36,name:"Cat Toys Bundle",price:9,rating:4.8,reviews:156,seller:"PetCare Ghana",location:"Accra, Ghana",category:"pets",icon:"🐈",badge:"Fun",delivery:"3 days",stock:89,desc:"Bundle of 5 interactive cat toys. Keeps your cat entertained for hours. Safe materials."},
 ];
 
 const PAYMENT_METHODS = [
