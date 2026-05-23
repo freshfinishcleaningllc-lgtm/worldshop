@@ -238,6 +238,14 @@ export default function WorldShop() {
     setAiR(r); setAiLoad(false);
   };
 
+  // Auto open chat after 4 seconds
+  useState(() => {
+    setTimeout(() => {
+      setShowChat(true);
+      setChatMessages([{role:"ai", text:"👋 Welcome to WorldShop Africa! I am your AI shopping assistant. How can I help you today? Ask me about products, delivery, payments or anything!"}]);
+    }, 4000);
+  });
+
   const sendChat = async () => {
     if (!chatInput.trim()) return;
     const userMsg = chatInput;
