@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const CATEGORIES = [
   {id:"all",icon:"🌍",label:"All"},{id:"food",icon:"🌾",label:"Food & Farm"},
@@ -239,7 +239,7 @@ export default function WorldShop() {
   };
 
   // Auto open chat after 4 seconds
-  useState(() => {
+  useEffect(() => {
     setTimeout(() => {
       setShowChat(true);
       setChatMessages([{role:"ai", text:"👋 Welcome to WorldShop Africa! I am your AI shopping assistant. How can I help you today? Ask me about products, delivery, payments or anything!"}]);
