@@ -245,9 +245,7 @@ export default function WorldShop() {
       setChatMessages([{role:"ai", text:"👋 Welcome to WorldShop Africa! I am your AI shopping assistant. How can I help you today? Ask me about products, delivery, payments or anything! 🌍🛒"}]);
     }, 4000);
   }, []);
-      setChatMessages([{role:"ai", text:"👋 Welcome to WorldShop Africa! I am your AI shopping assistant. How can I help you today? Ask me about products, delivery, payments or anything!"}]);
-    }, 4000);
-  });
+
 
   const sendChat = async () => {
     if (!chatInput.trim()) return;
