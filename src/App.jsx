@@ -138,8 +138,8 @@ export default function WorldShop() {
   const [selectedCourier, setSelectedCourier] = useState("dhl");
   // Order confirmations
   const [orderConfirmations, setOrderConfirmations] = useState([]);
-  const [showChat, setShowChat] = useState(false);
-  const [chatMessages, setChatMessages] = useState([{role:"ai", text:"Hi! 👋 I am WorldShop AI. How can I help you today? Ask me about products, orders, delivery or anything!"}]);
+  const [showChat, setShowChat] = useState(true);
+  const [chatMessages, setChatMessages] = useState([{role:"ai", text:"👋 Welcome to WorldShop Africa! I am your AI shopping assistant. How can I help you today? Ask me about products, delivery, payments or anything! 🌍🛒"}]);
   const [chatInput, setChatInput] = useState("");
   const [chatLoading, setChatLoading] = useState(false);
 
@@ -238,13 +238,7 @@ export default function WorldShop() {
     setAiR(r); setAiLoad(false);
   };
 
-  // Auto open chat after 4 seconds
-  useEffect(() => {
-    setTimeout(() => {
-      setShowChat(true);
-      setChatMessages([{role:"ai", text:"👋 Welcome to WorldShop Africa! I am your AI shopping assistant. How can I help you today? Ask me about products, delivery, payments or anything! 🌍🛒"}]);
-    }, 4000);
-  }, []);
+
 
 
   const sendChat = async () => {
