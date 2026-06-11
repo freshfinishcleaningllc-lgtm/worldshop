@@ -59,6 +59,9 @@ const PAYMENT_METHODS = [
   {id:"crypto",icon:"₿",label:"Crypto",desc:"Bitcoin, USDT, Solana",fee:"0.1%"},
 ];
 
+// Categories that require a medical disclaimer on all listings
+const HEALTH_CATS = ["health", "beauty", "baby"];
+
 // ── API CALLS (via Netlify functions) ─────────────────────────────────────────
 const callAI = async (prompt, system) => {
   try {
@@ -454,6 +457,9 @@ export default function WorldShop() {
                 <div style={{ fontSize: "0.58rem", color: "rgba(240,253,244,0.35)", marginBottom: "5px" }}>⭐{p.rating} · 📍{p.location}</div>
                 {p.badge && <span style={{ background: "rgba(34,197,94,0.1)", color: C.accent, borderRadius: "6px", padding: "1px 6px", fontSize: "0.52rem", fontWeight: 700 }}>{p.badge}</span>}
                 <button className="b" onClick={e => { e.stopPropagation(); addToCart(p); }} style={{ display: "block", marginTop: "7px", width: "100%", background: C.accent, border: "none", borderRadius: "7px", padding: "5px", color: "#052e16", fontWeight: 700, fontSize: "0.62rem" }}>Add to Cart</button>
+                {HEALTH_CATS.includes(p.category) && (
+                  <div style={{ fontSize: "0.5rem", color: "rgba(245,158,11,0.7)", marginTop: "4px", textAlign: "center" }}>⚕️ Health disclaimer applies</div>
+                )}
               </div>
             ))}
           </div>
@@ -498,6 +504,9 @@ export default function WorldShop() {
                   <span style={{ fontSize: "0.5rem", color: "rgba(240,253,244,0.28)" }}>🚚{p.delivery}</span>
                 </div>
                 <button className="b" onClick={e => { e.stopPropagation(); addToCart(p); }} style={{ width: "100%", background: C.accent, border: "none", borderRadius: "7px", padding: "5px", color: "#052e16", fontWeight: 700, fontSize: "0.62rem" }}>🛒 Add</button>
+                {HEALTH_CATS.includes(p.category) && (
+                  <div style={{ fontSize: "0.5rem", color: "rgba(245,158,11,0.7)", marginTop: "4px", textAlign: "center" }}>⚕️ Health disclaimer applies</div>
+                )}
               </div>
             ))}
           </div>
@@ -517,6 +526,18 @@ export default function WorldShop() {
               <span>🚚{selected.delivery}</span>
             </div>
             <p style={{ fontSize: "0.75rem", color: "rgba(240,253,244,0.52)", lineHeight: 1.6, marginBottom: "10px" }}>{selected.desc}</p>
+            {HEALTH_CATS.includes(selected.category) && (
+              <div style={{ background: "rgba(245,158,11,0.07)", border: "1px solid rgba(245,158,11,0.25)", borderRadius: "9px", padding: "10px 12px", marginBottom: "11px", textAlign: "left" }}>
+                <div style={{ fontWeight: 700, fontSize: "0.72rem", color: "#f59e0b", marginBottom: "5px" }}>⚕️ Medical Disclaimer</div>
+                <p style={{ fontSize: "0.68rem", color: "rgba(240,253,244,0.62)", lineHeight: 1.65, margin: 0 }}>
+                  Product descriptions provided by sellers. WorldShop does not provide medical advice. Consult a qualified healthcare professional.
+                </p>
+                <div style={{ display: "flex", gap: "14px", marginTop: "7px" }}>
+                  <a href="https://www.who.int" target="_blank" rel="noreferrer" style={{ color: "#22c55e", fontSize: "0.65rem", fontWeight: 700, textDecoration: "none" }}>🌍 WHO.int</a>
+                  <a href="https://www.cdc.gov" target="_blank" rel="noreferrer" style={{ color: "#22c55e", fontSize: "0.65rem", fontWeight: 700, textDecoration: "none" }}>🏥 CDC.gov</a>
+                </div>
+              </div>
+            )}
             <div style={{ background: "rgba(34,197,94,0.06)", borderRadius: "9px", padding: "9px", marginBottom: "11px", textAlign: "left", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
               <div>
                 <div style={{ fontWeight: 700, fontSize: "0.77rem", color: C.accent }}>👤 {selected.seller}</div>
